@@ -67,7 +67,7 @@ class CostConfig:
 
 @dataclass
 class AppConfig:
-    page_title: str = "Afyalink Referral System"
+    page_title: str = "LifeLine Referral System"
     page_icon: str = "🩺"
     layout: str = "wide"
     notification_check_interval: int = 30
@@ -3686,7 +3686,7 @@ class HospitalReferralApp:
             st.error("An unexpected error occurred. Please refresh the page.")
     
     def render_landing_page(self):
-        st.title("🩺 AfyaLink")
+        st.title("🩺 LifeLine")
         
         st.markdown("""
         ## Welcome to the Hospital Referral & Ambulance Tracking System
@@ -3729,7 +3729,7 @@ class HospitalReferralApp:
         
         st.markdown("---")
         st.markdown(
-            "**Afyalink Hospital Referral System** | "
+            "**LifeLine Hospital Referral System** | "
             "Secure • Reliable • Cost-Efficient"
         )
     
