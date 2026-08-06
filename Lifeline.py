@@ -767,9 +767,9 @@ class CostCalculationService:
         return {
             'distance_km': distance_km,
             'fuel_used_liters': round(fuel_used, 2),
-            'fuel_cost_ksh': round(fuel_cost, 2),
-            'operating_cost_ksh': round(operating_cost, 2),
-            'total_cost_ksh': round(total_cost, 2)
+            'fuel_cost_KES': round(fuel_cost, 2),
+            'operating_cost_KES': round(operating_cost, 2),
+            'total_cost_KES': round(total_cost, 2)
         }
     
     def calculate_potential_savings(self, actual_distance: float, alternative_distance: float) -> float:
@@ -777,7 +777,7 @@ class CostCalculationService:
         actual_cost = self.calculate_trip_cost(actual_distance)
         alternative_cost = self.calculate_trip_cost(alternative_distance)
         
-        savings = alternative_cost['total_cost_ksh'] - actual_cost['total_cost_ksh']
+        savings = alternative_cost['total_cost_KES'] - actual_cost['total_cost_KES']
         return max(0, savings)
     
     def update_ambulance_costs(self, ambulance_id: str, distance_km: float) -> Optional[Dict]:
@@ -791,10 +791,10 @@ class CostCalculationService:
                 trip_cost = self.calculate_trip_cost(distance_km, ambulance.fuel_consumption_rate)
                 
                 ambulance.total_distance_traveled += distance_km
-                ambulance.total_fuel_cost += trip_cost['fuel_cost_ksh']
+                ambulance.total_fuel_cost += trip_cost['fuel_cost_KES']
                 
                 # Calculate potential savings (15% of total cost as efficiency savings)
-                potential_savings = trip_cost['total_cost_ksh'] * 0.15
+                potential_savings = trip_cost['total_cost_KES'] * 0.15
                 ambulance.cost_savings += potential_savings
                 
                 # Update fuel level based on distance covered
@@ -1017,7 +1017,7 @@ class ReferralService:
                     
                     cost_estimate = self.cost_service.calculate_trip_cost(distance)
                     patient_data['trip_distance'] = distance
-                    patient_data['trip_fuel_cost'] = cost_estimate['total_cost_ksh']
+                    patient_data['trip_fuel_cost'] = cost_estimate['total_cost_KES']
                 
                 # Remove auto_assign_ambulance from patient_data as it's not a Patient model field
                 auto_assign = patient_data.pop('auto_assign_ambulance', False)
@@ -1182,8 +1182,8 @@ class ReferralService:
                 )
                 
                 if trip_cost:
-                    patient.trip_fuel_cost = trip_cost['total_cost_ksh']
-                    patient.trip_cost_savings = trip_cost['total_cost_ksh'] * 0.15
+                    patient.trip_fuel_cost = trip_cost['total_cost_KES']
+                    patient.trip_cost_savings = trip_cost['total_cost_KES'] * 0.15
                     patient.actual_distance_covered = patient.trip_distance
             
             session.commit()
@@ -1468,9 +1468,9 @@ class DashboardUI:
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Total Fuel Cost", f"KSh {kpis['total_fuel_cost']:,.0f}")
+            st.metric("Total Fuel Cost", f"KES {kpis['total_fuel_cost']:,.0f}")
         with col2:
-            st.metric("Cost Savings", f"KSh {kpis['total_cost_savings']:,.0f}")
+            st.metric("Cost Savings", f"KES {kpis['total_cost_savings']:,.0f}")
         with col3:
             st.metric("Total Distance", f"{kpis['total_distance_km']:,.1f} km")
         with col4:
@@ -1498,7 +1498,7 @@ class DashboardUI:
             fig.update_layout(
                 title='Monthly Costs vs Savings',
                 xaxis_title='Month',
-                yaxis_title='Amount (KSh)',
+                yaxis_title='Amount (KES)',
                 hovermode='x unified'
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -1506,9 +1506,9 @@ class DashboardUI:
             # Additional cost metrics
             col1, col2 = st.columns(2)
             with col1:
-                st.metric("Total Trip Costs", f"KSh {cost_data['total_trip_costs']:,.0f}")
+                st.metric("Total Trip Costs", f"KES {cost_data['total_trip_costs']:,.0f}")
             with col2:
-                st.metric("Total Trip Savings", f"KSh {cost_data['total_trip_savings']:,.0f}")
+                st.metric("Total Trip Savings", f"KES {cost_data['total_trip_savings']:,.0f}")
         else:
             st.info("No cost data available yet. Costs will appear after patient handovers are completed.")
 
@@ -1533,9 +1533,9 @@ class DashboardUI:
                 for patient in recent_patients:
                     cost_info = ""
                     if patient.trip_fuel_cost:
-                        cost_info = f"KSh {patient.trip_fuel_cost:,.0f}"
+                        cost_info = f"KES {patient.trip_fuel_cost:,.0f}"
                         if patient.trip_cost_savings:
-                            cost_info += f" (Saved: KSh {patient.trip_cost_savings:,.0f})"
+                            cost_info += f" (Saved: KES {patient.trip_cost_savings:,.0f})"
                     
                     data.append({
                         'Patient ID': patient.patient_id[:8] + '...',
@@ -1624,9 +1624,9 @@ class ReferralUI:
                 with col1:
                     st.metric("Estimated Distance", f"{distance} km")
                 with col2:
-                    st.metric("Estimated Fuel Cost", f"KSh {cost_estimate['fuel_cost_ksh']:,.0f}")
+                    st.metric("Estimated Fuel Cost", f"KES {cost_estimate['fuel_cost_KES']:,.0f}")
                 with col3:
-                    st.metric("Total Estimated Cost", f"KSh {cost_estimate['total_cost_ksh']:,.0f}")
+                    st.metric("Total Estimated Cost", f"KES {cost_estimate['total_cost_KES']:,.0f}")
         
         st.subheader("🚑 Ambulance Assignment")
         ambulance_assignment_type = st.radio(
@@ -1823,9 +1823,9 @@ class ReferralUI:
             ambulance_info = patient.assigned_ambulance or "Not assigned"
             cost_info = ""
             if patient.trip_fuel_cost:
-                cost_info = f"KSh {patient.trip_fuel_cost:,.0f}"
+                cost_info = f"KES {patient.trip_fuel_cost:,.0f}"
                 if patient.trip_cost_savings:
-                    cost_info += f" (Saved: KSh {patient.trip_cost_savings:,.0f})"
+                    cost_info += f" (Saved: KES {patient.trip_cost_savings:,.0f})"
             
             data.append({
                 'Patient ID': patient.patient_id[:8] + '...',
@@ -1874,11 +1874,11 @@ class CostManagementUI:
         if cost_data['total_trip_costs'] > 0:
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric("Total Fuel Cost", f"KSh {kpis['total_fuel_cost']:,.0f}")
+                st.metric("Total Fuel Cost", f"KES {kpis['total_fuel_cost']:,.0f}")
             with col2:
-                st.metric("Total Savings", f"KSh {kpis['total_cost_savings']:,.0f}")
+                st.metric("Total Savings", f"KES {kpis['total_cost_savings']:,.0f}")
             with col3:
-                st.metric("Net Cost", f"KSh {kpis['total_fuel_cost'] - kpis['total_cost_savings']:,.0f}")
+                st.metric("Net Cost", f"KES {kpis['total_fuel_cost'] - kpis['total_cost_savings']:,.0f}")
             with col4:
                 savings_rate = (kpis['total_cost_savings'] / kpis['total_fuel_cost'] * 100) if kpis['total_fuel_cost'] > 0 else 0
                 st.metric("Savings Rate", f"{savings_rate:.1f}%")
@@ -1925,7 +1925,7 @@ class CostManagementUI:
         col1, col2 = st.columns(2)
         with col1:
             current_price = st.number_input(
-                "Current Fuel Price (KSh/L)",
+                "Current Fuel Price (KES/L)",
                 value=float(Config.costs.fuel_price_per_liter),
                 min_value=100.0,
                 max_value=300.0,
@@ -1996,7 +1996,7 @@ class CostManagementUI:
                 x=cost_data['months'],
                 y=cost_data['monthly_savings'],
                 title="Monthly Cost Savings Trend",
-                labels={'x': 'Month', 'y': 'Savings (KSh)'}
+                labels={'x': 'Month', 'y': 'Savings (KES)'}
             )
             st.plotly_chart(fig, use_container_width=True)
             
@@ -2037,7 +2037,7 @@ class CostManagementUI:
         
         col1, col2 = st.columns(2)
         with col1:
-            monthly_budget = st.number_input("Monthly Budget (KSh)", 
+            monthly_budget = st.number_input("Monthly Budget (KES)", 
                                            value=500000, 
                                            min_value=100000, 
                                            max_value=5000000)
@@ -2055,13 +2055,13 @@ class CostManagementUI:
         st.subheader("Budget Projections")
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Projected Cost", f"KSh {projected_cost:,.0f}")
+            st.metric("Projected Cost", f"KES {projected_cost:,.0f}")
         with col2:
-            st.metric("Projected Savings", f"KSh {projected_savings:,.0f}")
+            st.metric("Projected Savings", f"KES {projected_savings:,.0f}")
         with col3:
             status = "Within Budget" if net_projected_cost <= monthly_budget else "Over Budget"
             st.metric("Budget Status", status, 
-                     delta=f"KSh {monthly_budget - net_projected_cost:,.0f}")
+                     delta=f"KES {monthly_budget - net_projected_cost:,.0f}")
         
         budget_data = {
             'Category': ['Projected Cost', 'Projected Savings', 'Net Cost'],
@@ -2108,15 +2108,15 @@ class TrackingUI:
                             col1, col2, col3, col4 = st.columns(4)
                             with col1:
                                 estimated_cost = self.cost_service.calculate_trip_cost(patient.trip_distance)
-                                st.metric("Estimated Cost", f"KSh {estimated_cost['total_cost_ksh']:,.0f}")
+                                st.metric("Estimated Cost", f"KES {estimated_cost['total_cost_KES']:,.0f}")
                             with col2:
                                 st.metric("Distance", f"{patient.trip_distance:.1f} km")
                             with col3:
                                 fuel_used = patient.trip_distance * ambulance.fuel_consumption_rate
                                 st.metric("Fuel Needed", f"{fuel_used:.1f} L")
                             with col4:
-                                potential_savings = estimated_cost['total_cost_ksh'] * 0.15
-                                st.metric("Potential Savings", f"KSh {potential_savings:,.0f}")
+                                potential_savings = estimated_cost['total_cost_KES'] * 0.15
+                                st.metric("Potential Savings", f"KES {potential_savings:,.0f}")
                         
                         # Display map and tracking info
                         self._display_tracking_info(patient, ambulance)
@@ -2299,8 +2299,8 @@ class TrackingUI:
                 
                 with col2:
                     st.write(f"**Fuel Level:** {ambulance.fuel_level:.1f}%")
-                    st.write(f"**Fuel Cost:** KSh {total_fuel_cost:,.0f}")
-                    st.write(f"**Cost Savings:** KSh {total_savings:,.0f}")
+                    st.write(f"**Fuel Cost:** KES {total_fuel_cost:,.0f}")
+                    st.write(f"**Cost Savings:** KES {total_savings:,.0f}")
                     st.write(f"**Efficiency:** {(total_savings / total_fuel_cost * 100) if total_fuel_cost > 0 else 0:.1f}%")
                 
                 if ambulance.current_patient:
@@ -2314,7 +2314,7 @@ class TrackingUI:
                                 patient.trip_distance, 
                                 ambulance.fuel_consumption_rate
                             )
-                            st.write(f"**Trip Cost Estimate:** KSh {cost_info['total_cost_ksh']:,.0f}")
+                            st.write(f"**Trip Cost Estimate:** KES {cost_info['total_cost_KES']:,.0f}")
 
 # Enhanced Communication UI
 class CommunicationUI:
@@ -2989,9 +2989,9 @@ class HandoverUI:
                     with col1:
                         st.metric("Distance", f"{selected_patient.trip_distance} km")
                     with col2:
-                        st.metric("Fuel Cost", f"KSh {cost_info['fuel_cost_ksh']:,.0f}")
+                        st.metric("Fuel Cost", f"KES {cost_info['fuel_cost_KES']:,.0f}")
                     with col3:
-                        st.metric("Total Cost", f"KSh {cost_info['total_cost_ksh']:,.0f}")
+                        st.metric("Total Cost", f"KES {cost_info['total_cost_KES']:,.0f}")
                 
                 st.subheader("Vital Signs at Handover")
                 col1, col2 = st.columns(2)
@@ -3044,8 +3044,8 @@ class HandoverUI:
                             'ambulance_id': selected_patient.assigned_ambulance,
                             'created_by': st.session_state.user['id'],
                             'distance_covered': distance_covered,
-                            'fuel_cost': cost_info['fuel_cost_ksh'],
-                            'total_cost': cost_info['total_cost_ksh']
+                            'fuel_cost': cost_info['fuel_cost_KES'],
+                            'total_cost': cost_info['total_cost_KES']
                         }
                         handover = HandoverForm(**handover_data)
                         session.add(handover)
@@ -3089,7 +3089,7 @@ class HandoverUI:
                             if handover.distance_covered:
                                 st.write(f"**Distance Covered:** {handover.distance_covered} km")
                             if handover.total_cost:
-                                st.write(f"**Total Cost:** KSh {handover.total_cost:,.0f}")
+                                st.write(f"**Total Cost:** KES {handover.total_cost:,.0f}")
                         
                         if handover.vital_signs:
                             st.subheader("Vital Signs at Handover")
@@ -3154,7 +3154,7 @@ class HandoverUI:
                 'Receiving Physician': handover.receiving_physician,
                 'Ambulance ID': handover.ambulance_id,
                 'Distance Covered (km)': handover.distance_covered,
-                'Total Cost (KSh)': handover.total_cost,
+                'Total Cost (KES)': handover.total_cost,
                 'Handover Time': handover.transfer_time.strftime('%Y-%m-%d %H:%M')
             })
         df = pd.DataFrame(data)
@@ -3184,7 +3184,7 @@ class HandoverUI:
         story.append(Spacer(1, 12))
         
         # Table data
-        data = [['Patient', 'Hospital', 'Distance (km)', 'Cost (KSh)', 'Time']]
+        data = [['Patient', 'Hospital', 'Distance (km)', 'Cost (KES)', 'Time']]
         total_distance = 0
         total_cost = 0
         
@@ -3322,7 +3322,7 @@ class ReportsUI:
                         'Location': ambulance.current_location,
                         'Fuel Level': f"{ambulance.fuel_level:.1f}%",
                         'Total Distance': f"{ambulance.total_distance_traveled:,.1f} km",
-                        'Total Cost': f"KSh {ambulance.total_fuel_cost:,.0f}"
+                        'Total Cost': f"KES {ambulance.total_fuel_cost:,.0f}"
                     })
                 st.dataframe(pd.DataFrame(ambulance_data), use_container_width=True)
             else:
@@ -3335,11 +3335,11 @@ class ReportsUI:
         if cost_data['total_trip_costs'] > 0:
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("Total Trip Costs", f"KSh {cost_data['total_trip_costs']:,.0f}")
+                st.metric("Total Trip Costs", f"KES {cost_data['total_trip_costs']:,.0f}")
             with col2:
-                st.metric("Total Savings", f"KSh {cost_data['total_trip_savings']:,.0f}")
+                st.metric("Total Savings", f"KES {cost_data['total_trip_savings']:,.0f}")
             with col3:
-                st.metric("Net Cost", f"KSh {cost_data['total_trip_costs'] - cost_data['total_trip_savings']:,.0f}")
+                st.metric("Net Cost", f"KES {cost_data['total_trip_costs'] - cost_data['total_trip_savings']:,.0f}")
             
             fig = go.Figure()
             fig.add_trace(go.Bar(
@@ -3358,7 +3358,7 @@ class ReportsUI:
                 title='Monthly Costs vs Savings',
                 barmode='group',
                 xaxis_title='Month',
-                yaxis_title='Amount (KSh)'
+                yaxis_title='Amount (KES)'
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -3469,8 +3469,8 @@ class ReportsUI:
                         'Patient ID': patient.patient_id,
                         'Patient Name': patient.name,
                         'Distance (km)': patient.trip_distance,
-                        'Fuel Cost (KSh)': patient.trip_fuel_cost,
-                        'Cost Savings (KSh)': patient.trip_cost_savings,
+                        'Fuel Cost (KES)': patient.trip_fuel_cost,
+                        'Cost Savings (KES)': patient.trip_cost_savings,
                         'Referring Hospital': patient.referring_hospital,
                         'Receiving Hospital': patient.receiving_hospital,
                         'Completion Time': patient.updated_at
@@ -3503,8 +3503,8 @@ class ReportsUI:
         Total Referrals: {kpis['total_referrals']}
         Active Transfers: {kpis['active_referrals']}
         Available Ambulances: {kpis['available_ambulances']}
-        Total Fuel Cost: KSh {kpis['total_fuel_cost']:,.0f}
-        Total Savings: KSh {kpis['total_cost_savings']:,.0f}
+        Total Fuel Cost: KES {kpis['total_fuel_cost']:,.0f}
+        Total Savings: KES {kpis['total_cost_savings']:,.0f}
         """
         summary = Paragraph(summary_text, styles['Normal'])
         story.append(summary)
@@ -3515,9 +3515,9 @@ class ReportsUI:
         if cost_data['total_trip_costs'] > 0:
             cost_table_data = [
                 ['Metric', 'Value'],
-                ['Total Trip Costs', f"KSh {cost_data['total_trip_costs']:,.0f}"],
-                ['Total Savings', f"KSh {cost_data['total_trip_savings']:,.0f}"],
-                ['Net Cost', f"KSh {cost_data['total_trip_costs'] - cost_data['total_trip_savings']:,.0f}"],
+                ['Total Trip Costs', f"KES {cost_data['total_trip_costs']:,.0f}"],
+                ['Total Savings', f"KES {cost_data['total_trip_savings']:,.0f}"],
+                ['Net Cost', f"KES {cost_data['total_trip_costs'] - cost_data['total_trip_savings']:,.0f}"],
                 ['Cost Efficiency', f"{(cost_data['total_trip_savings'] / cost_data['total_trip_costs'] * 100) if cost_data['total_trip_costs'] > 0 else 0:.1f}%"]
             ]
             
