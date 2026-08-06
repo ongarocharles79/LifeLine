@@ -1437,7 +1437,7 @@ class DashboardUI:
         self.db_service = db_service
     
     def display(self):
-        st.title("📊 Dashboard Overview")
+        st.title("🎛️Dashboard Overview")
         
         kpis = self.analytics.get_kpis()
         
