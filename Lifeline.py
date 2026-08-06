@@ -1477,7 +1477,7 @@ class DashboardUI:
             st.metric("Fuel Efficiency", kpis['fuel_efficiency'])
 
     def _display_cost_analytics(self):
-        st.subheader("💰 Cost Analytics")
+        st.subheader(" Cost Analytics")
         cost_data = self.analytics.get_cost_analytics()
         
         # Only show chart if there are actual costs
