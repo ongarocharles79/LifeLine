@@ -1,0 +1,542 @@
+/* LIFELINE visual theme — token-driven, light/dark aware.
+   The authoritative token values are injected at runtime by
+   config/theme.py::inject_theme_vars() (based on st.context.theme.type),
+   which emits a :root {...} block AFTER this stylesheet loads and so wins
+   the cascade. The @media block below is only a same-tab fallback for the
+   brief moment before that Python-injected style is present. */
+
+:root {
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --secondary: #0D9488;
+    --success: #059669;
+    --warning: #D97706;
+    --error: #DC2626;
+    --info: #0284C7;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --background: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface-alt: #F1F5F9;
+    --border: #E2E8F0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #3B82F6;
+        --primary-hover: #60A5FA;
+        --secondary: #2DD4BF;
+        --success: #34D399;
+        --warning: #FBBF24;
+        --error: #F87171;
+        --info: #38BDF8;
+        --text-primary: #F1F5F9;
+        --text-secondary: #CBD5E1;
+        --text-muted: #94A3B8;
+        --background: #0F172A;
+        --surface: #1E293B;
+        --surface-alt: #334155;
+        --border: #334155;
+    }
+}
+
+html, body, [class*="css"] {
+    font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+}
+
+.stApp {
+    background: var(--background);
+}
+
+/* ---- Demo banner ---- */
+.lifeline-demo-banner {
+    background: var(--primary);
+    color: #FFFFFF;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+/* ---- Icons ---- */
+.lifeline-icon-svg {
+    vertical-align: middle;
+    color: inherit;
+}
+
+/* ---- KPI cards ---- */
+.lifeline-kpi-card {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    min-height: 118px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.lifeline-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.10);
+    border-color: var(--primary);
+}
+.lifeline-kpi-card:hover .kpi-icon {
+    color: var(--primary-hover);
+}
+
+.kpi-icon {
+    color: var(--primary);
+    margin-bottom: 6px;
+    transition: color 0.15s ease;
+}
+.kpi-value { font-size: 1.65rem; font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+.kpi-value.accent-primary { color: var(--primary); }
+.kpi-value.accent-success { color: var(--success); }
+.kpi-value.accent-warning { color: var(--warning); }
+.kpi-value.accent-error { color: var(--error); }
+.kpi-label { font-size: 0.82rem; color: var(--text-secondary); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+.kpi-delta { font-size: 0.75rem; color: var(--success); margin-top: 6px; font-weight: 600; }
+
+/* Small ghost "View" action tightly attached under a clickable KPI card. */
+div[data-testid="stVerticalBlock"] .lifeline-kpi-action-row {
+    margin-top: -6px;
+}
+.lifeline-kpi-action-row .stButton > button {
+    font-size: 0.78rem;
+    padding: 2px 4px;
+    color: var(--primary);
+}
+.lifeline-kpi-action-row .stButton > button:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* ---- Feature cards (landing page) ---- */
+.lifeline-feature-card {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 20px;
+    height: 100%;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lifeline-feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.14);
+}
+.feature-icon { color: var(--primary); margin-bottom: 10px; }
+.feature-title { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.feature-description { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* ---- Status pills ---- */
+.lifeline-status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* ---- Status legend dot swatches ---- */
+.lifeline-status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+.lifeline-legend-item {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ---- Landing hero ---- */
+.lifeline-hero {
+    text-align: center;
+    padding: 48px 16px 32px 16px;
+}
+.lifeline-hero h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+.lifeline-hero .tagline {
+    font-size: 1.2rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.9rem;
+}
+.lifeline-hero .supporting {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.lifeline-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin: 2.2rem 0 1.2rem 0;
+}
+
+.lifeline-coverage-stat {
+    text-align: center;
+    padding: 18px;
+}
+.lifeline-coverage-stat .stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+.lifeline-coverage-stat .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.lifeline-workflow-step {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    height: 100%;
+}
+.lifeline-workflow-step .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--surface-alt);
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.lifeline-workflow-step .step-title {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+/* ---- Sidebar user card ---- */
+.lifeline-user-card {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+}
+.lifeline-user-card .name { font-weight: 700; color: var(--text-primary); font-size: 0.95rem; }
+.lifeline-user-card .role { font-size: 0.78rem; color: var(--primary); font-weight: 600; }
+
+/* ---- Buttons ---- */
+.stButton > button, .stDownloadButton > button {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+}
+.stButton > button[kind="primary"] {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+.stButton > button[kind="primary"]:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+.stButton > button[kind="secondary"]:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.stButton > button:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+.stButton > button:disabled {
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
+}
+.stButton > button:focus-visible,
+.stDownloadButton > button:focus-visible,
+[data-testid="stSidebarNavLink"]:focus-visible,
+.lifeline-tooltip-trigger:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* ---- Sidebar navigation hover / active states ---- */
+[data-testid="stSidebarNavLink"] {
+    border-radius: 8px;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+[data-testid="stSidebarNavLink"]:hover {
+    background-color: var(--surface-alt);
+}
+[data-testid="stSidebarNavLink"][aria-current="page"] {
+    background-color: var(--surface-alt);
+    background-color: color-mix(in srgb, var(--primary) 14%, transparent);
+    font-weight: 700;
+}
+[data-testid="stSidebarNavLink"][aria-current="page"] * {
+    color: var(--primary);
+}
+
+/* ---- Accessible CSS-only tooltip (hover + keyboard focus) ---- */
+.lifeline-tooltip-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    color: var(--text-muted);
+    cursor: help;
+    position: relative;
+}
+.lifeline-tooltip-trigger:hover,
+.lifeline-tooltip-trigger:focus-visible {
+    color: var(--primary);
+}
+.lifeline-tooltip-trigger .lifeline-tooltip-bubble {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 230px;
+    background: var(--text-primary);
+    color: var(--surface);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+    transition: opacity 0.12s ease;
+    z-index: 20;
+    pointer-events: none;
+}
+.lifeline-tooltip-trigger:hover .lifeline-tooltip-bubble,
+.lifeline-tooltip-trigger:focus-visible .lifeline-tooltip-bubble {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ---- Priority / emergency emphasis ---- */
+.lifeline-panel.lifeline-panel-emergency {
+    border-left: 4px solid var(--error);
+}
+.lifeline-panel.lifeline-panel-active {
+    border-left: 4px solid var(--primary);
+}
+
+/* ---- Section card wrapper (used inside forms/expanders) ---- */
+.lifeline-panel {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+.lifeline-panel b { color: var(--text-primary); }
+
+/* ---- Referral journey section (landing page) ---- */
+.lifeline-journey-track {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+}
+.lifeline-journey-card {
+    flex: 1 1 0;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.lifeline-journey-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+    border-color: var(--journey-accent, var(--primary));
+}
+.lifeline-journey-image-wrap {
+    height: 190px;
+    overflow: hidden;
+}
+.lifeline-journey-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.lifeline-journey-card:hover .lifeline-journey-image-wrap img {
+    transform: scale(1.045);
+}
+.lifeline-journey-body {
+    padding: 16px 18px 18px 18px;
+}
+.lifeline-journey-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--journey-accent, var(--primary));
+    margin-bottom: 6px;
+}
+.lifeline-journey-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    transition: color 0.15s ease;
+}
+.lifeline-journey-card:hover .lifeline-journey-title {
+    color: var(--journey-accent, var(--primary));
+}
+.lifeline-journey-description {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+.lifeline-journey-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    flex: 0 0 auto;
+    width: 24px;
+}
+
+@media (max-width: 900px) {
+    .lifeline-journey-track {
+        flex-direction: column;
+    }
+    .lifeline-journey-connector {
+        width: 100%;
+        height: 20px;
+        transform: rotate(90deg);
+    }
+    .lifeline-journey-image-wrap {
+        height: 210px;
+    }
+}
+
+/* ---- Photo-backed feature cards ("Core Features" grid) ----
+   The dark overlay is a fixed navy gradient independent of the site's
+   light/dark theme tokens on purpose: it exists to keep white text
+   readable over a photograph, not to reflect page background — so it
+   must not change between themes (see LIFELINE UI/UX task history). */
+.lifeline-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.lifeline-photo-card {
+    position: relative;
+    height: 270px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.lifeline-photo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.20);
+    border-color: var(--journey-accent, var(--primary));
+}
+.lifeline-photo-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+.lifeline-photo-card:hover img {
+    transform: scale(1.035);
+}
+.lifeline-photo-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+        rgba(8, 15, 30, 0.05) 0%,
+        rgba(8, 15, 30, 0.15) 35%,
+        rgba(8, 15, 30, 0.75) 78%,
+        rgba(8, 15, 30, 0.92) 100%);
+}
+.lifeline-photo-card-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 16px 18px 18px 18px;
+}
+.lifeline-photo-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid var(--journey-accent, rgba(255, 255, 255, 0.4));
+    color: #F8FAFC;
+    margin-bottom: 10px;
+}
+.lifeline-photo-card-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.25;
+}
+.lifeline-photo-card-accent-line {
+    width: 30px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--journey-accent, var(--primary));
+    margin: 7px 0 8px 0;
+}
+.lifeline-photo-card-description {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: rgba(248, 250, 252, 0.90);
+}
+
+@media (max-width: 1100px) {
+    .lifeline-feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 640px) {
+    .lifeline-feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
